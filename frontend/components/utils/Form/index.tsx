@@ -6,10 +6,11 @@ type FormProps = {
   inputs: { label: string; type: string; key: string; isRequired?: boolean }[]
   handleSubmit: (values: { [key: string]: any }) => Promise<void>
   SubmitButton: (props: { loading: boolean }) => JSX.Element
+  formValues?: {[key: string] : any}
 }
 
-const Form = ({ inputs, handleSubmit, SubmitButton }: FormProps) => {
-  const [values, setValues] = useState<{ [key: string]: any }>({})
+const Form = ({ inputs, handleSubmit, SubmitButton, formValues }: FormProps) => {
+  const [values, setValues] = useState<{ [key: string]: any }>(formValues || {})
   const [loading, setLoading] = useState(false)
   const handleInputChange = useCallback(
     (name: string, value: any) => {

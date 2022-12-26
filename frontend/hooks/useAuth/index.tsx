@@ -261,7 +261,7 @@ const useAuth = ({
     }
     return await cognitoClient()?.getUser({
       AccessToken: (auth as AuthResponse).AccessToken || '',
-    })
+    }).promise()
   }, [getAuth, cognitoClient])
 
   return {

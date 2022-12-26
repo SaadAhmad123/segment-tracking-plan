@@ -4,9 +4,7 @@ import Navbar from '../../Navbar'
 
 const DashboardPage = () => {
   return (
-    <Layout
-      navbar={<Navbar/>}
-    >
+    <Layout navbar={<Navbar />}>
       <div style={{ height: '10000px' }}>dsadsadsad</div>
     </Layout>
   )

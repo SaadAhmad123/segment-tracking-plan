@@ -10,7 +10,6 @@ import LoadingScreen from '../components/LoadingScreen'
 export default function () {
   const router = useRouter()
   const status = useCheckUserLoginStatus()
-  console.log(status)
   if (status === LoginCheckState.loading) return <LoadingScreen />
   if (status === LoginCheckState.loggedIn) {
     router.push('/dashboard')

@@ -24,4 +24,12 @@ export class AppEnvironment {
   static getCognitoClientId() {
     return process.env.COGNITO_USERPOOL_CLIENT_ID
   }
+
+  static getRestApiBase() {
+    return process.env.REST_API_BASE_URL
+  }
+
+  static makeRestUrl(path: string) {
+    return `${process.env.REST_API_BASE_URL}${path}`
+  }
 }

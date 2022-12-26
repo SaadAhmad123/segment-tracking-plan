@@ -5,8 +5,10 @@ module.exports = (dynamoDb) => async (req, res) => {
     // Extract the cognito_uuid and the updated user information from the request parameters and body
     attachCorsHeaders(res);
     let cognito_uuid = undefined
+    let email = undefined
     try {
         cognito_uuid = req.requestContext.authorizer.claims.sub
+        email = req.requestContext.authorizer.claims.email
     } catch (e) {
         console.error(e)
         res.status(500).json("Internal server error. Something is wrong with Authentication")
@@ -14,7 +16,8 @@ module.exports = (dynamoDb) => async (req, res) => {
     }
     const user = {
         ...req.body,
-        cognito_uuid
+        cognito_uuid,
+        email
     };
     const validationError = validateUser(user);
     if (validationError) {

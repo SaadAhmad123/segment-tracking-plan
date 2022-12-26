@@ -24,6 +24,7 @@
     "@types/react-dom": "18.0.9",
     "@xstate/react": "^3.0.1",
     "aws-sdk": "^2.1279.0",
+    "axios": "^1.2.1",
     "dotenv": "^16.0.3",
     "eslint": "8.30.0",
     "eslint-config-next": "13.0.7",
