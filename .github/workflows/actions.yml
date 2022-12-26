@@ -11,7 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Change directory to backend
-        run: cd backend
+        run: |
+          cd backend
+          ls
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
         with:
@@ -27,7 +29,12 @@ jobs:
           echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> terraform.tfvars
           echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> terraform.tfvars
           echo "ENVIRONMENT=${{ secrets.ENVIRONMENT }}" >> terraform.tfvars
+          ls
       - name: Initialize Terraform
-        run: terraform init
+        run: |
+          ls
+          terraform init
       - name: Apply Terraform
-        run: terraform apply -var-file=terraform.tfvars
+        run: |
+          ls
+          terraform apply -var-file=terraform.tfvars
