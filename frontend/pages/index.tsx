@@ -8,6 +8,7 @@ import LoadingScreen from '../components/LoadingScreen'
 
 // eslint-disable-next-line react/display-name
 export default function () {
+  //dsadsadsa
   const router = useRouter()
   const status = useCheckUserLoginStatus()
   console.log(status)
