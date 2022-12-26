@@ -26,15 +26,12 @@ jobs:
           echo "AWS_ACCESS_KEY=\"${{ secrets.AWS_ACCESS_KEY }}\"" >> terraform.tfvars
           echo "AWS_SECRET_KEY=\"${{ secrets.AWS_SECRET_KEY }}\"" >> terraform.tfvars
           echo "ENVIRONMENT=\"${{ secrets.ENVIRONMENT }}\"" >> terraform.tfvars
-          ls
       - name: Initialize Terraform
         run: |
           cd backend
-          ls
           terraform init
+
       - name: Apply Terraform
         run: |
           cd backend
-          ls
-          cat terraform.tfvars
-          terraform apply -var-file=terraform.tfvars
+          terraform apply -var-file=terraform.tfvars -auto-approve
