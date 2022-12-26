@@ -18,10 +18,10 @@ export class AppEnvironment {
   }
 
   static getAwsRegion() {
-    return process.env.AWS_REGION
+    return process.env.REGION
   }
 
   static getCognitoClientId() {
-    return process.env.AWS_COGNITO_USERPOOL_CLIENT_ID
+    return process.env.COGNITO_USERPOOL_CLIENT_ID
   }
 }
