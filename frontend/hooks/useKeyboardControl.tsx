@@ -1,0 +1,21 @@
+import React from 'react'
+import useKeyboard from './useKeyboard'
+
+/**
+ * Custom hook for listening to keyboard events and executing an action when a specific key combination is pressed.
+ *
+ * @param {string} controlKeyCode - The key code of the key to be pressed in the key combination. The codes
+ * must belong to this [documentation](https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_code_values)
+ * @param {function(): void} action - The action to be executed when the key combination is pressed.
+ *
+ * @returns {void}
+ */
+const useKeyboardControl = (controlKeyCode: string, action: () => void) => {
+  useKeyboard({
+    condition: (event) =>
+      event.shiftKey && event.altKey && event.code === controlKeyCode,
+    action: action,
+  })
+}
+
+export default useKeyboardControl

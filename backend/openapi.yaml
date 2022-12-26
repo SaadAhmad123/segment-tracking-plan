@@ -1,0 +1,530 @@
+openapi: 3.0.0
+info:
+  title: API for managing users and tracking plans
+  version: 1.0.0
+  description: API for creating, reading, updating, and deleting user and tracking plan records
+  contact:
+    name: API Support
+    email: support@example.com
+servers:
+  - url: https://api.example.com/
+paths:
+  /manage/user:
+    post:
+      summary: Create a new user record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRecord"
+      responses:
+        "201":
+          description: User record created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserRecord"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+    get:
+      summary: Get a user record
+      responses:
+        "200":
+          description: User record found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserRecord"
+        "404":
+          description: User record not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+    patch:
+      summary: Update a user record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRecordForPatch"
+      responses:
+        "200":
+          description: User record updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserRecord"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+        "404":
+          description: User record not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+    delete:
+      summary: Delete a user record
+      responses:
+        "200":
+          description: User record deleted successfully
+        "404":
+          description: User record not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+  /manage/tracking-plan:
+    post:
+      summary: Create a new tracking plan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrackingPlanRecordForPostAndPatch"
+      responses:
+        "200":
+          description: Tracking plan created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrackingPlanRecord"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+    get:
+      summary: Get a tracking plan
+      parameters:
+        - in: query
+          name: paginationToken
+          schema:
+            type: string
+          description: Token for pagination. Use the `paginationToken` value returned in the previous response to get the next page of results.
+        - in: query
+          name: itemCount
+          schema:
+            type: integer
+          description: Number of results to return per page.
+      responses:
+        "200":
+          description: Tracking plans found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TrackingPlanRecord"
+                  pagination:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                        description: Number of items returned in the current page
+                      token:
+                        type: string
+                        description: Token for pagination. Use this value to get the next page of results.
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+  /manage/tracking-plan/{tracking_plan_id}:
+    patch:
+      summary: Update a tracking plan
+      parameters:
+        - in: path
+          name: tracking_plan_id
+          schema:
+            type: string
+          required: true
+          description: ID of the tracking plan to update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: New name for the tracking plan
+                description:
+                  type: string
+                  description: New description for the tracking plan
+      responses:
+        "200":
+          description: Tracking plan updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrackingPlanRecord"
+        "400":
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Invalid request
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Internal server error
+        "404":
+          description: Record does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Record does not exist
+  /manage/published-tracking-plan:
+    post:
+      summary: Create a new published tracking plan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrackingPlan"
+      responses:
+        "200":
+          description: Successfully created a new published tracking plan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrackingPlan"
+        "400":
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Invalid request
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Internal server error
+    delete:
+      summary: Delete a published tracking plan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - created_at
+                - tracking_plan_uuid
+              properties:
+                created_at:
+                  type: number
+                tracking_plan_uuid:
+                  type: string
+      responses:
+        "200":
+          description: Successfully deleted a published tracking plan
+        "400":
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Invalid request
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Internal server error
+  /manage/published-tracking-plan/{tracking_plan_id}:
+    get:
+      summary: Get a published tracking plan
+      parameters:
+        - in: path
+          name: tracking_plan_uuid
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully retrieved a published tracking plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        tracking_plan_uuid:
+                          type: string
+                        created_at:
+                          type: number
+                        created_by_cognito_uuid:
+                          type: string
+                        data:
+                          type: string
+                  pagination:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+                        nullable: true
+                      token:
+                        type: string
+                        nullable: true
+        "400":
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Invalid request
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Internal server error
+  /:
+    get:
+      summary: Catch-all route for non-existent resources
+      responses:
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message
+components:
+  schemas:
+    TrackingPlan:
+      type: object
+      required:
+        - data
+        - tracking_plan_uuid
+      properties:
+        tracking_plan_uuid:
+          type: string
+        data:
+          type: string
+    UserRecord:
+      type: object
+      required:
+        - cognito_uuid
+        - first_name
+        - last_name
+        - organisation
+        - email
+      properties:
+        cognito_uuid:
+          type: string
+          description: Unique identifier for the user
+        first_name:
+          type: string
+          description: First name of the user
+        last_name:
+          type: string
+          description: Last name of the user
+        organisation:
+          type: string
+          description: Organisation the user belongs to
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp for when the user record was created
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp for when the user record was last updated
+        email:
+          type: string
+          format: email
+          description: Email address of the user
+    UserRecordForPatch:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - organisation
+      properties:
+        first_name:
+          type: string
+          description: First name of the user
+        last_name:
+          type: string
+          description: Last name of the user
+        organisation:
+          type: string
+          description: Organisation the user belongs to
+    TrackingPlanRecord:
+      type: object
+      required:
+        - cognito_uuid
+        - tracking_plan_uuid
+        - name
+        - description
+      properties:
+        cognito_uuid:
+          type: string
+          description: Unique identifier for the user who created the tracking plan
+        tracking_plan_uuid:
+          type: string
+          description: Unique identifier for the tracking plan
+        name:
+          type: string
+          description: Name of the tracking plan
+        description:
+          type: string
+          description: Description of the tracking plan
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp for when the tracking plan was created
+    TrackingPlanRecordForPostAndPatch:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          description: Name of the tracking plan
+        description:
+          type: string
+          description: Description of the tracking plan
