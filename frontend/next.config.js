@@ -3,8 +3,8 @@ const nextConfig = {
   reactStrictMode: true,
   env: {
     BUILD: process.env.BUILD,
-    AWS_REGION: process.env.AWS_REGION,
-    AWS_COGNITO_USERPOOL_CLIENT_ID: process.env.AWS_COGNITO_USERPOOL_CLIENT_ID,
+    REGION: process.env.REGION,
+    COGNITO_USERPOOL_CLIENT_ID: process.env.COGNITO_USERPOOL_CLIENT_ID,
   },
 }
 
