@@ -30,7 +30,12 @@ jobs:
         run: |
           cd backend
           terraform init
-
+      - name: Install Node modules
+        run: |
+          cd backend/src/segment_proxy/
+          npm install
+          cd ../manage
+          npm install
       - name: Apply Terraform
         run: |
           cd backend
