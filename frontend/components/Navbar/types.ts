@@ -1,7 +1,7 @@
 import React from 'react'
 
 export interface NavbarOption {
-  icon: React.ReactNode
+  icon?: React.ReactNode
   text: string
   onClick: () => void
   type?: 'EMPHASIS'

@@ -259,9 +259,11 @@ const useAuth = ({
     if (!(auth as AuthResponse)?.AccessToken) {
       throw new Error('No Access Token')
     }
-    return await cognitoClient()?.getUser({
-      AccessToken: (auth as AuthResponse).AccessToken || '',
-    }).promise()
+    return await cognitoClient()
+      ?.getUser({
+        AccessToken: (auth as AuthResponse).AccessToken || '',
+      })
+      .promise()
   }, [getAuth, cognitoClient])
 
   return {

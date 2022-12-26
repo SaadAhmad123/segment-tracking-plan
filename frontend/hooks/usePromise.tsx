@@ -25,6 +25,12 @@ function usePromise<T extends any[], R>(
   const [error, setError] = useState<Error | undefined>()
   const [data, setData] = useState<R | undefined>()
 
+  const reset = useCallback(() => {
+    setState(UsePromiseState.idle)
+    setError(undefined)
+    setData(undefined)
+  }, [setState, setError, setData])
+
   const retry = useCallback(
     async (...arg: T) => {
       setState(UsePromiseState.loading)
@@ -48,6 +54,7 @@ function usePromise<T extends any[], R>(
     error,
     retry,
     data,
+    reset,
   }
 }
 

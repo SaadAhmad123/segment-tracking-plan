@@ -41,7 +41,7 @@ resource "aws_api_gateway_integration_response" "cors_integration_response" {
   response_parameters = {
     "method.response.header.Access-Control-Allow-Credentials" = "'true'"
     "method.response.header.Access-Control-Allow-Headers"     = "'Authorization,Content-Type'"
-    "method.response.header.Access-Control-Allow-Methods"     = "'OPTIONS,POST'",
+    "method.response.header.Access-Control-Allow-Methods"     = "'OPTIONS,POST,PATCH,DELETE'",
     "method.response.header.Access-Control-Allow-Origin"      = "'${join(",", ["*"])}'",
   }
 

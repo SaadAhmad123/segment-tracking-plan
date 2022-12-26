@@ -29,9 +29,13 @@ export const createButton = (
         className={`flex items-center transition duration-200 ${className} ${props.className} `}
         onClick={props.onClick}
       >
-        {withIcon?.start && <span className="mr-3">{props.icon}</span>}
+        {withIcon?.start && props.icon && (
+          <span className="mr-3">{props.icon}</span>
+        )}
         {props.text}
-        {withIcon?.end && <span className="ml-3">{props.icon}</span>}
+        {withIcon?.end && props.icon && (
+          <span className="ml-3">{props.icon}</span>
+        )}
       </button>
     )
   }

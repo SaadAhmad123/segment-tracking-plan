@@ -1,35 +1,55 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import Layout from '../../Layout'
 import Navbar from '../../Navbar'
-import { useRouter } from 'next/router'
 import { AuthContextType } from '../../../AuthContext/types'
 import AuthContext from '../../../AuthContext/Context'
 import onMount from '../../../hooks/onMount'
-import { createUser, getUser } from './api'
+import { createUser, getUser, updateUser } from './api'
 import usePromise, { UsePromiseState } from '../../../hooks/usePromise'
-import LoadingScreen from '../../LoadingScreen'
 import { User } from '../../types'
 import RegistrationBox from '../Registration/utils/RegistrationBox'
 import Form from '../../utils/Form'
 import { FullWidthButton } from '../../Buttons'
 import Spinner from '../../Spinner'
+import { AxiosError } from 'axios'
 
 const ProfilePage = () => {
-  const router = useRouter()
   const { auth, authUser } = useContext<AuthContextType>(AuthContext)
-  const [user, setUser] = useState<User>({
-    email: authUser?.UserAttributes?.filter(item => item.Name === "email")?.[0]?.Value || "",
-    first_name: "",
-    last_name: "",
-    organisation: ""
-  })
+  const [user, setUser] = useState<User | undefined>()
+  const [userExists, setUserExists] = useState(false)
   const getUserPromise = usePromise(getUser)
   const createUserPromise = usePromise(createUser)
+  const updateUserPromise = usePromise(updateUser)
+
+  const submitting = useMemo(
+    () =>
+      createUserPromise.state === UsePromiseState.loading ||
+      updateUserPromise.state === UsePromiseState.loading ||
+      getUserPromise.state === UsePromiseState.loading,
+    [updateUserPromise, createUserPromise, getUserPromise],
+  )
+
+  const error = useMemo<string>(() => {
+    if (submitting) return ''
+    if (
+      updateUserPromise.state === UsePromiseState.error ||
+      getUserPromise.state === UsePromiseState.error ||
+      createUserPromise.state === UsePromiseState.error
+    ) {
+      const _error =
+        getUserPromise.error ||
+        createUserPromise.error ||
+        updateUserPromise.error
+      // @ts-ignore
+      return (_error as AxiosError)?.response?.data?.error || 'Error occurred'
+    }
+    return ''
+  }, [updateUserPromise, createUserPromise, getUserPromise, submitting])
+
   onMount(async () => {
     const resp = await getUserPromise.retry(auth?.IdToken || '')
-    if (resp) {
-      setUser(resp)
-    }
+    setUser(resp)
+    setUserExists(Boolean(resp))
   })
 
   const inputs = [
@@ -37,50 +57,63 @@ const ProfilePage = () => {
     { label: 'Last Name', type: 'text', key: 'last_name' },
     { label: 'Organization', type: 'text', key: 'organisation' },
     { label: 'Email', type: 'email', key: 'email' },
-  ].map((item) => ({ ...item, isRequired: true }))
+  ]
 
-  if (getUserPromise.state === UsePromiseState.loading) {
-    return <LoadingScreen />
-  }
-
-  const handleSubmit = async (values: User) => {
-    const resp = await createUserPromise.retry(auth?.IdToken || "", values)
-    if (resp) {
+  const handleSubmit = async (values: { [key: string]: any }) => {
+    createUserPromise.reset()
+    getUserPromise.reset()
+    updateUserPromise.reset()
+    if (userExists) {
+      setUser(values as User)
+      const resp = await updateUserPromise.retry(
+        auth?.IdToken || '',
+        values as User,
+      )
       setUser(resp)
+      return
     }
+    setUser(values as User)
+    const resp = await createUserPromise.retry(
+      auth?.IdToken || '',
+      values as User,
+    )
+    if (resp) setUser(resp)
+    setUserExists(Boolean(resp))
   }
 
   return (
-    <Layout
-      navbar={
-        <Navbar
-          title={
-            <h1
-              className="font-bold sm:text-xl m-0 p-0 cursor-pointer"
-              onClick={() => router.push('/')}
-            >
-              <span className="text-servian-orange">Tracking</span> Plans -
-              Profile
-            </h1>
+    <Layout navbar={<Navbar />}>
+      <RegistrationBox
+        heading={'Your Profile'}
+        error={error || (userExists ? error : 'User profile does not exists.')}
+      >
+        <Form
+          inputs={inputs}
+          handleSubmit={handleSubmit}
+          formValues={
+            user || {
+              email:
+                authUser?.UserAttributes?.filter(
+                  (item) => item.Name === 'email',
+                )?.[0]?.Value || '',
+              first_name: '',
+              last_name: '',
+              organisation: '',
+            }
           }
-        />
-      }
-    >
-      <RegistrationBox heading={"Your Profile"} error={""}>
-        <Form inputs={inputs} handleSubmit={handleSubmit} SubmitButton={
-          () => {
-            if (createUserPromise.state === UsePromiseState.loading) {
+          SubmitButton={() => {
+            if (submitting) {
               return (
                 <FullWidthButton
                   icon={<Spinner />}
-                  text={'Loading...'}
+                  text={'Saving...'}
                   type={'button'}
                 />
               )
             }
-            return (<FullWidthButton text={"Submit"}/>)
-          }
-        } formValues={user}/>
+            return <FullWidthButton text={'Submit'} />
+          }}
+        />
       </RegistrationBox>
     </Layout>
   )

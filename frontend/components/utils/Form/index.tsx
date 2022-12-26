@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Input from './Input'
 import Separator from '../../Separator'
 
@@ -6,11 +6,17 @@ type FormProps = {
   inputs: { label: string; type: string; key: string; isRequired?: boolean }[]
   handleSubmit: (values: { [key: string]: any }) => Promise<void>
   SubmitButton: (props: { loading: boolean }) => JSX.Element
-  formValues?: {[key: string] : any}
+  formValues?: { [key: string]: any }
 }
 
-const Form = ({ inputs, handleSubmit, SubmitButton, formValues }: FormProps) => {
+const Form = ({
+  inputs,
+  handleSubmit,
+  SubmitButton,
+  formValues,
+}: FormProps) => {
   const [values, setValues] = useState<{ [key: string]: any }>(formValues || {})
+  useEffect(() => setValues(formValues || {}), [formValues])
   const [loading, setLoading] = useState(false)
   const handleInputChange = useCallback(
     (name: string, value: any) => {

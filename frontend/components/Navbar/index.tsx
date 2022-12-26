@@ -26,6 +26,11 @@ const Navbar = ({ title, options }: INavbar) => {
     ([
       {
         icon: <FontAwesomeIcon icon={faUserCircle} />,
+        text: 'Dashboard',
+        onClick: () => router.push('/dashboard'),
+      },
+      {
+        icon: <FontAwesomeIcon icon={faUserCircle} />,
         text: 'Profile',
         onClick: () => router.push('/profile'),
       },
@@ -125,7 +130,7 @@ const Navbar = ({ title, options }: INavbar) => {
               {(options?.length || 0) === index + 1 ? (
                 <></>
               ) : (
-                <Separator key={index.toString() + '-mobile-3-sep'} />
+                <Separator key={index.toString() + '-mobile-3-sep'} padding={8}/>
               )}
             </React.Fragment>
           ))}

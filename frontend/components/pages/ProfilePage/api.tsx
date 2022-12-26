@@ -19,11 +19,29 @@ export const getUser = async (IdToken: string) => {
 }
 
 export const createUser = async (IdToken: string, user: User) => {
-  const resp = await axios.post(AppEnvironment.makeRestUrl('/manage/user'), user, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: IdToken,
+  const resp = await axios.post(
+    AppEnvironment.makeRestUrl('/manage/user'),
+    user,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: IdToken,
+      },
     },
-  })
+  )
+  return resp.data as User
+}
+
+export const updateUser = async (IdToken: string, user: User) => {
+  const resp = await axios.patch(
+    AppEnvironment.makeRestUrl('/manage/user'),
+    user,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: IdToken,
+      },
+    },
+  )
   return resp.data as User
 }
