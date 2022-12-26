@@ -1,1 +1,0 @@
-aws cognito-idp initiate-auth --region ap-southeast-2 --auth-flow USER_PASSWORD_AUTH --client-id 6khdhe4m8akocilemdira6c42q --auth-parameters USERNAME=saad.ahmad@servian.com,PASSWORD=Passw0rd!

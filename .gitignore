@@ -8,3 +8,7 @@ backend/.terraform/
 backend/build/
 
 backend/.terraform.lock.hcl
+
+backend/junk.txt
+
+backend/terraform.tfvars
