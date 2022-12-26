@@ -10,10 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Change directory to backend
-        run: |
-          cd backend
-          ls
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
         with:
@@ -26,15 +22,18 @@ jobs:
           aws-region: ap-southeast-2
       - name: Set environment variables
         run: |
+          cd backend
           echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> terraform.tfvars
           echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> terraform.tfvars
           echo "ENVIRONMENT=${{ secrets.ENVIRONMENT }}" >> terraform.tfvars
           ls
       - name: Initialize Terraform
         run: |
+          cd backend
           ls
           terraform init
       - name: Apply Terraform
         run: |
+          cd backend
           ls
           terraform apply -var-file=terraform.tfvars
