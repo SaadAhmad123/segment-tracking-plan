@@ -34,4 +34,4 @@ jobs:
       - name: Apply Terraform
         run: |
           cd backend
-          terraform apply -var-file=terraform.tfvars -auto-approve
+          terraform apply -auto-approve -var-file=terraform.tfvars -lock=false
