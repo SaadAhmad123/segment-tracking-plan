@@ -12,3 +12,8 @@ backend/.terraform.lock.hcl
 backend/junk.txt
 
 backend/terraform.tfvars
+
+backend/terraform.tfstate
+
+backend/terraform.tfstate.backup
+

@@ -1,6 +1,6 @@
 
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = "segment-tracking-plan-application-terraform-state"
+  bucket = "stpm-application-terraform-state"
   lifecycle {
     prevent_destroy = true
   }

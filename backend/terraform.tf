@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "segment-tracking-plan-application-terraform-state"
+    bucket = "stpm-application-terraform-state"
     key    = "global/s3/terraform.tfstate"
     region = "ap-southeast-2"
 
