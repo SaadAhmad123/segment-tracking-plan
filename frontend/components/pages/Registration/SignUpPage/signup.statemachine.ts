@@ -1,4 +1,5 @@
 import { createMachine, assign } from 'xstate'
+import safeConsole from '../../../../helpers/safeConsole'
 
 type SignupStateMachineContextType = {
   email: string
@@ -163,7 +164,7 @@ const signupStateMachine = createMachine<SignupStateMachineContextType>(
         error: (context, event) => event?.data?.message || '',
       }),
       clearErrorFromContext: assign({ error: (_, __) => '' }),
-      onError: (context, event) => console.log({ context, event }),
+      onError: (context, event) => safeConsole()?.error({ context, event }),
       assignConfirmPasswordToContext: assign({
         confirmPassword: (context, event) => event.confirmPassword,
       }),

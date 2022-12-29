@@ -5,14 +5,12 @@ import useCheckUserLoginStatus, {
 } from '../hooks/useCheckUserLoginStatus'
 import LoadingScreen from '../components/LoadingScreen'
 import ProfilePage from '../components/pages/ProfilePage'
-import useAuth from '../hooks/useAuth'
 import AuthProvider from '../AuthContext'
 
 // eslint-disable-next-line react/display-name
 export default function () {
   const router = useRouter()
   const status = useCheckUserLoginStatus()
-  const { getAuth } = useAuth({})
   if (status === LoginCheckState.loading) return <LoadingScreen />
   if (status === LoginCheckState.notLoggedIn) {
     router.push('/login')

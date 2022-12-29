@@ -130,7 +130,10 @@ const Navbar = ({ title, options }: INavbar) => {
               {(options?.length || 0) === index + 1 ? (
                 <></>
               ) : (
-                <Separator key={index.toString() + '-mobile-3-sep'} padding={8}/>
+                <Separator
+                  key={index.toString() + '-mobile-3-sep'}
+                  padding={8}
+                />
               )}
             </React.Fragment>
           ))}
