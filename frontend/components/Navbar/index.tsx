@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { INavbar, NavbarOption } from './types'
 import { createButton, IconButton } from '../Buttons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserCircle, faBars } from '@fortawesome/free-solid-svg-icons'
+import { faUserCircle, faBars, faList, faLock } from '@fortawesome/free-solid-svg-icons'
 import Separator from '../Separator'
 import { useRouter } from 'next/router'
 import useAuth from '../../hooks/useAuth'
@@ -33,7 +33,7 @@ const Navbar = ({ title, options }: INavbar) => {
     options ||
     ([
       {
-        icon: <FontAwesomeIcon icon={faUserCircle} />,
+        icon: <FontAwesomeIcon icon={faList} />,
         text: 'Dashboard',
         onClick: () => router.push('/dashboard'),
       },
@@ -43,7 +43,7 @@ const Navbar = ({ title, options }: INavbar) => {
         onClick: () => router.push('/profile'),
       },
       {
-        icon: <FontAwesomeIcon icon={faUserCircle} />,
+        icon: <FontAwesomeIcon icon={faLock} />,
         text: 'Sign Out',
         onClick: async () => {
           await signOut()
