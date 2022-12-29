@@ -7,8 +7,8 @@ import Separator from '../../Separator'
 const DashboardPage = () => {
   return (
     <Layout navbar={<Navbar />}>
-      <Separator padding={10}/>
-      <TrackingPlanCreatedByMe/>
+      <Separator padding={10} />
+      <TrackingPlanCreatedByMe />
     </Layout>
   )
 }
