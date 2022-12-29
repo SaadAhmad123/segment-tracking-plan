@@ -42,7 +42,7 @@ const ProfilePage = () => {
     { label: 'Last Name', type: 'text', key: 'last_name' },
     { label: 'Organization', type: 'text', key: 'organisation' },
     { label: 'Email', type: 'email', key: 'email' },
-  ]
+  ].map(item => ({...item, isRequired: true}))
 
   const handleSubmit = async (values: { [key: string]: any }) => {
     send('UPDATE_PROFILE', values)
@@ -73,7 +73,7 @@ const ProfilePage = () => {
         current.matches('Waiting For Profile Data') ||
         current.matches("Idle")
       ) && (
-        <RegistrationBox heading={'Your Profile'} error={current.context.error}>
+        <RegistrationBox heading={current.matches("Waiting For Profile Data") ? "Create Profile" : 'Your Profile'} error={current.context.error}>
           <Form
             inputs={inputs}
             handleSubmit={handleSubmit}
