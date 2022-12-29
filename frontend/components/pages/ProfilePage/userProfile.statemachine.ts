@@ -10,91 +10,91 @@ type UserProfileStateMachineContextType = {
 const userProfileStateMachine =
   createMachine<UserProfileStateMachineContextType>(
     {
-      id: "UserProfile",
-      initial: "Idle",
+      id: 'UserProfile',
+      initial: 'Idle',
       states: {
         Idle: {
           on: {
             FETCH_PROFILE: {
-              target: "Fetching Profile",
-              actions: "clearErrorFromContext",
+              target: 'Fetching Profile',
+              actions: 'clearErrorFromContext',
             },
           },
         },
-        "Fetching Profile": {
+        'Fetching Profile': {
           invoke: {
-            src: "onFetchingProfile",
+            src: 'onFetchingProfile',
             onDone: [
               {
-                target: "Show User Profile",
+                target: 'Show User Profile',
                 actions: [
-                  "onUserProfile",
-                  "logResponse",
-                  "assignUserProfileToContext",
+                  'onUserProfile',
+                  'logResponse',
+                  'assignUserProfileToContext',
                 ],
               },
             ],
             onError: [
               {
-                target: "Waiting For Profile Data",
-                cond: "isUserProfileNotExist",
+                target: 'Waiting For Profile Data',
+                cond: 'isUserProfileNotExist',
               },
               {
-                target: "Error",
+                target: 'Error',
               },
             ],
           },
         },
-        "Show User Profile": {
+        'Show User Profile': {
           on: {
             UPDATE_PROFILE: {
-              target: "Update Profile",
-              actions: "clearErrorFromContext",
+              target: 'Update Profile',
+              actions: 'clearErrorFromContext',
             },
           },
         },
         Error: {
-          entry: ["assignErrorToContext", "onError"],
-          type: "final",
+          entry: ['assignErrorToContext', 'onError'],
+          type: 'final',
         },
-        "Waiting For Profile Data": {
+        'Waiting For Profile Data': {
           on: {
             UPDATE_PROFILE: {
-              target: "Create Profile",
-              actions: ["clearErrorFromContext", "assignUserProfileToContext"],
+              target: 'Create Profile',
+              actions: ['clearErrorFromContext', 'assignUserProfileToContext'],
             },
           },
         },
-        "Update Profile": {
+        'Update Profile': {
           invoke: {
-            src: "onUpdateProfile",
+            src: 'onUpdateProfile',
             onDone: [
               {
-                target: "Fetching Profile",
-                actions: ["logResponse", "assignUserProfileToContext"],
+                target: 'Fetching Profile',
+                actions: ['logResponse', 'assignUserProfileToContext'],
               },
             ],
             onError: [
               {
-                target: "Show User Profile",
-                actions: ["assignErrorToContext", "onError"],
+                target: 'Show User Profile',
+                actions: ['assignErrorToContext', 'onError'],
               },
             ],
           },
         },
-        "Create Profile": {
+        'Create Profile': {
           invoke: {
-            src: "onCreateProfile",
+            src: 'onCreateProfile',
             onDone: [
               {
-                target: "Fetching Profile",
-                actions: ["logResponse", "assignUserProfileToContext"],
+                target: 'Fetching Profile',
+                actions: ['logResponse', 'assignUserProfileToContext'],
               },
             ],
             onError: [
               {
-                target: "Waiting For Profile Data",
-                actions: ["assignErrorToContext", "onError"],
+                target: 'Waiting For Profile Data',
+                actions: ['assignErrorToContext', 'onError'],
               },
             ],
           },
@@ -102,12 +102,12 @@ const userProfileStateMachine =
       },
       schema: {
         context: {} as {
-          error: string;
-          user: Record<string, any>;
+          error: string
+          user: Record<string, any>
         },
-        events: {} as { type: "FETCH_PROFILE" } | { type: "UPDATE_PROFILE" },
+        events: {} as { type: 'FETCH_PROFILE' } | { type: 'UPDATE_PROFILE' },
       },
-      context: { error: "", user: null },
+      context: { error: '', user: null },
       predictableActionArguments: true,
       preserveActionOrder: true,
     },
@@ -116,7 +116,8 @@ const userProfileStateMachine =
         logResponse: (context, event) => safeConsole()?.log({ context, event }),
         onError: (context, event) => safeConsole()?.error({ context, event }),
         assignErrorToContext: assign({
-          error: (context, event) => event?.data?.response?.data?.error || 'Something went wrong',
+          error: (context, event) =>
+            event?.data?.response?.data?.error || 'Something went wrong',
         }),
         clearErrorFromContext: assign({ error: (_, __) => '' }),
         assignUserProfileToContext: assign({

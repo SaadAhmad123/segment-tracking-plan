@@ -18,7 +18,7 @@ const RegistrationBox = ({ heading, error, children }: IRegistrationBox) => {
     <div className="min-h-screen flex items-center py-24">
       <div className="w-full max-w-md mx-auto px-4 py-8 bg-white dark:bg-[#1B1E1F] border dark:border-gray-700">
         <div className="flex items-center justify-between  mb-4">
-          <h2 className="text-3xl sm:text-4xl font-bold">{heading}</h2>
+          <h2 className="text-2xl sm:text-4xl font-bold">{heading}</h2>
           <IconButton
             text={'Home'}
             icon={<FontAwesomeIcon icon={faHome} />}

@@ -42,7 +42,7 @@ const ProfilePage = () => {
     { label: 'Last Name', type: 'text', key: 'last_name' },
     { label: 'Organization', type: 'text', key: 'organisation' },
     { label: 'Email', type: 'email', key: 'email' },
-  ].map(item => ({...item, isRequired: true}))
+  ].map((item) => ({ ...item, isRequired: true }))
 
   const handleSubmit = async (values: { [key: string]: any }) => {
     send('UPDATE_PROFILE', values)
@@ -63,17 +63,22 @@ const ProfilePage = () => {
         content={'Updating your profile'}
       />
       <WaitingBox
-        show={
-          current.matches('Error')
-        }
+        show={current.matches('Error')}
         heading={'Error'}
-        content={'Something went wrong while fetching your profile. Please try later'}
+        content={
+          'Something went wrong while fetching your profile. Please try later'
+        }
       />
       {(current.matches('Show User Profile') ||
-        current.matches('Waiting For Profile Data') ||
-        current.matches("Idle")
-      ) && (
-        <RegistrationBox heading={current.matches("Waiting For Profile Data") ? "Create Profile" : 'Your Profile'} error={current.context.error}>
+        current.matches('Waiting For Profile Data')) && (
+        <RegistrationBox
+          heading={
+            current.matches('Waiting For Profile Data')
+              ? 'Create Profile'
+              : 'My Profile'
+          }
+          error={current.context.error}
+        >
           <Form
             inputs={inputs}
             handleSubmit={handleSubmit}

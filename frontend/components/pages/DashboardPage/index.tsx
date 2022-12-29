@@ -1,11 +1,14 @@
 import React from 'react'
 import Layout from '../../Layout'
 import Navbar from '../../Navbar'
+import TrackingPlanCreatedByMe from './TrackingPlan/CreatedByMe'
+import Separator from '../../Separator'
 
 const DashboardPage = () => {
   return (
     <Layout navbar={<Navbar />}>
-      <div style={{ height: '10000px' }}>dsadsadsad</div>
+      <Separator padding={10}/>
+      <TrackingPlanCreatedByMe/>
     </Layout>
   )
 }

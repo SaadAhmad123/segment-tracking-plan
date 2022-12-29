@@ -5,6 +5,7 @@ import onMount from '../hooks/onMount'
 import { GetUserResponse } from 'aws-sdk/clients/cognitoidentityserviceprovider'
 import { useRouter } from 'next/router'
 import LoadingScreen from '../components/LoadingScreen'
+import useSessionStorage from '../hooks/useSessionStorage'
 
 interface IAuthProvider {
   children: React.ReactNode
@@ -30,10 +31,10 @@ const AuthProvider = ({ children }: IAuthProvider) => {
       setAuthUser(_authUser)
     } catch (e) {
       goToHome()
-      return
     } finally {
       setLoading(false)
     }
+    return
   })
 
   if (loading) {

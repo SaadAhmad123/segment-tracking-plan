@@ -10,7 +10,10 @@ import useKeyboard from './useKeyboard'
  *
  * @returns {void}
  */
-const useKeyboardControl = (controlKeyCode: string, action: () => void) => {
+const useKeyboardControl = (
+  controlKeyCode: string,
+  action: () => any | Promise<any>,
+) => {
   useKeyboard({
     condition: (event) =>
       event.shiftKey && event.altKey && event.code === controlKeyCode,

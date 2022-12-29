@@ -8,9 +8,10 @@ import { useRouter } from 'next/router'
 import useAuth from '../../hooks/useAuth'
 import Drawer from 'react-modern-drawer'
 import 'react-modern-drawer/dist/index.css'
+import useKeyboardControl from '../../hooks/useKeyboardControl'
 
 const OptionButton = createButton(
-  'bg-servian-white hover:bg-gray-200 dark:bg-servian-black dark:hover:bg-[#1B1E1F] px-4 py-1 rounded-full border border-servian-orange',
+  'bg-white dark:bg-[#1B1E1F] px-4 py-1 rounded-full border dark:border-gray-700 hover:border-servian-orange hover:dark:border-servian-orange',
   { start: true },
 )
 const EmphasisedOptionButton = createButton(
@@ -21,6 +22,13 @@ const EmphasisedOptionButton = createButton(
 const Navbar = ({ title, options }: INavbar) => {
   const router = useRouter()
   const { signOut } = useAuth({})
+  useKeyboardControl('Slash', () => router.push('/dashboard'))
+  useKeyboardControl('KeyP', () => router.push('/profile'))
+  useKeyboardControl('Escape', async () => {
+    await signOut()
+    router.push('/')
+    return
+  })
   options =
     options ||
     ([
@@ -52,9 +60,7 @@ const Navbar = ({ title, options }: INavbar) => {
   return (
     <>
       <div
-        className={
-          'sticky top-0 mb-4 py-2 sm:py-4 bg-gray-100 dark:bg-[#1B1E1F]'
-        }
+        className='sticky top-0 mb-4 py-3 bg-white dark:bg-[#1B1E1F] shadow dark:shadow-none dark:border-b dark:border-gray-700'
       >
         <div className="max-w-[1600px] w-screen mx-auto px-4 sm:px-8 flex items-center justify-between">
           <div>
@@ -63,7 +69,7 @@ const Navbar = ({ title, options }: INavbar) => {
                 className="font-bold sm:text-xl m-0 p-0 cursor-pointer"
                 onClick={() => router.push('/')}
               >
-                <span className="text-servian-orange">Tracking</span> Plans
+                <span className="text-servian-orange">S.T.</span>P.M.
               </h1>
             )}
           </div>
