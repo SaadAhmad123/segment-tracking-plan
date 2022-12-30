@@ -51,7 +51,7 @@ const Form = ({
           label={input.label}
           type={input.type}
           value={values[input.key]}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+          onChange={(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
             handleInputChange(input.key, event.target.value)
           }
           isRequired={input.isRequired}

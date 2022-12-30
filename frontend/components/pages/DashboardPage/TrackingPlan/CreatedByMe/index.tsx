@@ -95,7 +95,8 @@ const TrackingPlanCreatedByMe = () => {
                   <h3 className="font-medium text-xl">{item.name}</h3>
                   <Separator padding={8}/>
 
-                  <h3 className="text-gray-500">{(item.description || "").slice(0, 150)}{(item.description || "").length > 150 && "..."}</h3>
+                  <h3 className="text-gray-500 hidden sm:block">{(item.description || "").slice(0, 150)}{(item.description || "").length > 150 && "..."}</h3>
+                  <h3 className="text-gray-500 block sm:hidden">{(item.description || "").slice(0, 50)}{(item.description || "").length > 50 && "..."}</h3>
                 </div>
               </TrackingPlanTileContainer>
             ))
