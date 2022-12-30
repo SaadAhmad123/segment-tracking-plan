@@ -14,10 +14,11 @@ module.exports = (dynamoDb) => async (req, res) => {
     }
     const params = {
         TableName: "TrackingPlan",
-        FilterExpression: "cognito_uuid = :cognito_uuid",
+        KeyConditionExpression: "cognito_uuid = :cognito_uuid",
         ExpressionAttributeValues: {
             ":cognito_uuid": cognito_uuid,
         },
+        ScanIndexForward: false,
     };
 
     if (req.query.paginationToken) {
@@ -28,7 +29,7 @@ module.exports = (dynamoDb) => async (req, res) => {
     params.Limit = req.query.itemCount || 10;
 
     try {
-        const result = await dynamoDb.scan(params).promise();
+        const result = await dynamoDb.query(params).promise();
         res
             .status(200)
             .json({

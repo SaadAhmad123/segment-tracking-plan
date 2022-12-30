@@ -22,14 +22,14 @@ resource "aws_dynamodb_table" "tracking_plan" {
   name         = "TrackingPlan"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "cognito_uuid"
-  range_key    = "tracking_plan_uuid"
+  range_key    = "created_at"
   attribute {
     name = "cognito_uuid"
     type = "S"
   }
   attribute {
-    name = "tracking_plan_uuid"
-    type = "S"
+    name = "created_at"
+    type = "N"
   }
 }
 

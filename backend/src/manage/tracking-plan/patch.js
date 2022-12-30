@@ -38,16 +38,18 @@ module.exports = (dynamoDb) => async (req, res) => {
                 tracking_plan_uuid: trackingPlanId,
             },
             UpdateExpression:
-                "SET #name = :name, #description = :description, #updated_at = :updated_at",
+                "SET #name = :name, #description = :description, #updated_at = :updated_at, #updated_at_iso = :updated_at_iso",
             ExpressionAttributeNames: {
                 "#name": "name",
                 "#description": "description",
-                "#updated_at": "updated_at"
+                "#updated_at": "updated_at",
+                "#updated_at_iso": "updated_at_iso"
             },
             ExpressionAttributeValues: {
                 ":name": updatedTrackingPlan.name,
                 ":description": updatedTrackingPlan.description,
-                ":updated_at": new Date().toISOString()
+                ":updated_at": Date.now(),
+                ":updated_at_iso": new Date().toISOString()
             },
             ReturnValues: "ALL_NEW",
         };

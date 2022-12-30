@@ -2,8 +2,15 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Input from './Input'
 import Separator from '../../Separator'
 
+export type FormInputItem = {
+  label: string
+  type: string
+  key: string
+  isRequired?: boolean
+}
+
 type FormProps = {
-  inputs: { label: string; type: string; key: string; isRequired?: boolean }[]
+  inputs: FormInputItem[]
   handleSubmit: (values: { [key: string]: any }) => Promise<void>
   SubmitButton: (props: { loading: boolean }) => JSX.Element
   formValues?: { [key: string]: any }

@@ -64,7 +64,7 @@ const Navbar = ({ title, options }: INavbar) => {
 
   return (
     <>
-      <div className="sticky top-0 mb-4 py-3 bg-white dark:bg-[#1B1E1F] shadow dark:shadow-none dark:border-b dark:border-gray-700">
+      <div className="sticky top-0 mb-4 py-3 bg-white dark:bg-[#1B1E1F] shadow dark:shadow-none dark:border-b dark:border-gray-700 z-50">
         <div className="max-w-[1600px] w-screen mx-auto px-4 sm:px-8 flex items-center justify-between">
           <div>
             {title || (

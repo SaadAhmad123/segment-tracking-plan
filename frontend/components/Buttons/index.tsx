@@ -63,6 +63,10 @@ export const HomePageActionButton = createButton(
   'bg-servian-orange text-servian-white px-8 py-2 text-normal sm:text-lg hover:bg-[#1B1E1F] transition duration-200',
   { start: true },
 )
+export const SuppressedHomePageActionButton = createButton(
+  'px-8 py-2 text-normal sm:text-lg transition duration-200 bg-gray-100 text-servian-black hover:bg-gray-200',
+  { start: true },
+)
 
 export const FullWidthButton = createButton(
   'bg-servian-orange text-servian-white px-6 py-2 text-lg transition duration-200 w-full justify-center hover:bg-[#DB6638]',

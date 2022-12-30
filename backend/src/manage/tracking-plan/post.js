@@ -18,8 +18,10 @@ module.exports = (dynamoDb) => async (req, res) => {
         tracking_plan_uuid: v4(),
         name: req.body.name,
         description: req.body.description,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        created_at: Date.now(),
+        create_at_iso: new Date().toISOString(),
+        updated_at: Date.now(),
+        updated_at_iso: new Date().toISOString()
     }
     const validationError = validateTrackingPlanProps(tableProps);
     if (validationError) {
