@@ -33,8 +33,8 @@ const NewTrackingPlanModal = ({
       setError('')
       await onSubmit(values)
     } catch (e) {
-      // @ts-ignore
       setError(
+        // @ts-ignore
         (e as AxiosError)?.response?.data?.error?.error ||
           (e as Error)?.message ||
           'Error occurred',
