@@ -7,9 +7,10 @@ interface ILayout {
   title?: string
   children: React.ReactNode
   navbar?: React.ReactNode
+  noContainer?: boolean
 }
 
-const Layout = ({ children, title, navbar }: ILayout) => {
+const Layout = ({ children, title, navbar, noContainer }: ILayout) => {
   return (
     <>
       <Head>
@@ -17,7 +18,8 @@ const Layout = ({ children, title, navbar }: ILayout) => {
       </Head>
       <div className="min-h-screen bg-servian-white dark:bg-servian-black text-servian-black dark:text-servian-white">
         {navbar}
-        <Container>{children}</Container>
+        {!noContainer && <Container>{children}</Container>}
+        {noContainer && <>{children}</>}
       </div>
       <ThemeButton />
     </>
