@@ -11,7 +11,8 @@ interface IUseUndoRedo<T> {
 
 
 /**
- * useUndoRedo is a hook that provides undo/redo functionality by listening for
+ * useUndoRedo is a hook that provides undo [(Cmd | Ctrl) + Z]/redo [(Shift + (Cmd | Ctrl) + Z)]
+ * functionality by listening for
  * keyboard events and calling the provided `onUndo` and `onRedo` functions if the
  * corresponding event occurs.
  *
@@ -31,6 +32,9 @@ function useUndoRedo<T>({ onRedo, onUndo }: IUseUndoRedo<T>) {
   const updateUndoStack = useCallback(
     (data: T, clearRedoStack = true) => {
       undoRef.current.push(JSON.stringify(data))
+      if (undoRef.current.length >= 100) {
+        undoRef.current.splice(0, 10)
+      }
       if (clearRedoStack) redoRef.current = []
     },
     [undoRef, redoRef],
@@ -39,6 +43,9 @@ function useUndoRedo<T>({ onRedo, onUndo }: IUseUndoRedo<T>) {
   const updateRedoStack = useCallback(
     (data: T) => {
       redoRef.current.push(JSON.stringify(data))
+      if (redoRef.current.length >= 100) {
+        redoRef.current.splice(0, 10)
+      }
     },
     [undoRef, redoRef],
   )

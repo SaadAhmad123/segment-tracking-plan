@@ -25,13 +25,12 @@ export const createAddRowsContextMenuItem = <T extends SSGenericType>(
       type === 'above' ? 'Above' : 'Below'
     }`,
     handler: () => {
-      const dataTemplate: T = Object.assign(
-        {},
-        ...columns.map((item) => ({ [item.columnId]: '' })),
-      )
       const _data = []
       for (let i = 0; i < rowsSelected.size; i++) {
-        _data.push(dataTemplate)
+        _data.push(Object.assign(
+          {},
+          ...columns.map((item) => ({ [item.columnId]: '' })),
+        ))
       }
       try {
         onClickAddRows?.(

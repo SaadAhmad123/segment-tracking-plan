@@ -77,6 +77,7 @@ const SpreadSheet = <T extends SSGenericType>({
   const onCellChanged = useCallback(
     (changes: CellChange[]) => {
       updateUndoStack(sheetDataRef.current || [])
+      console.log(changes)
       for (let i = 0; i < changes.length; i++) {
         const change = changes[i]
         const rowIdx = change.rowId as number
