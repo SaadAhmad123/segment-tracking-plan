@@ -14,7 +14,7 @@ export default function () {
   if (status === LoginCheckState.loading) return <LoadingScreen />
   if (status === LoginCheckState.notLoggedIn) {
     router.push('/login')
-    return
+    return <></>
   }
 
   return (

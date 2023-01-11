@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useAuth from './useAuth'
 import onMount from './onMount'
 
@@ -11,11 +11,11 @@ export enum LoginCheckState {
 const useCheckUserLoginStatus = () => {
   const { getUser } = useAuth({})
   const [state, setState] = useState<LoginCheckState>(LoginCheckState.loading)
-  onMount(() => {
+  useEffect(() => {
     getUser()
       .then((e) => setState(LoginCheckState.loggedIn))
       .catch(() => setState(LoginCheckState.notLoggedIn))
-  })
+  }, [])
   return state
 }
 

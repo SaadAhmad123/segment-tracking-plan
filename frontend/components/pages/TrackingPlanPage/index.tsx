@@ -1,17 +1,21 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
-import Layout from '../Layout'
-import Navbar from '../Navbar'
+import Layout from '../../Layout'
+import Navbar from '../../Navbar'
 import TopBar, { TrackingPlanControlIconButton } from './TopBar'
 import TitleBar from './TopBar/TitleBar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCog } from '@fortawesome/free-solid-svg-icons'
-import Separator from '../Separator'
+import Separator from '../../Separator'
 import SideBar from './SideBar'
-import useKeyboardControl from '../../hooks/useKeyboardControl'
-import SpreadSheet from '../SpreadSheet'
-import { createTestRecords, TestRecordColumns } from '../SpreadSheet/test'
-import { convertRowsToObjects, getRowsWithHeader } from '../SpreadSheet/utils'
+import useKeyboardControl from '../../../hooks/useKeyboardControl'
+import SpreadSheet from '../../SpreadSheet'
+import { createTestRecords, TestRecordColumns } from '../../SpreadSheet/test'
+import {
+  convertRowsToObjects,
+  getRowsWithHeader,
+} from '../../SpreadSheet/utils'
+import Excel from '../../Excel'
 
 const TrackingPlanPage = () => {
   const router = useRouter()
@@ -22,7 +26,7 @@ const TrackingPlanPage = () => {
   useKeyboardControl('KeyS', toggleLeftBar)
 
   return (
-    <Layout navbar={<Navbar />} noContainer>
+    <Layout navbar={<Navbar />}>
       <TopBar>
         <TrackingPlanControlIconButton
           text="Open options list"
@@ -32,22 +36,10 @@ const TrackingPlanPage = () => {
         <TitleBar content={['Tracking Plan', 'Sheet 1']} />
       </TopBar>
       <Separator padding={6} />
-      <div className="px-2 sm:px-4 md:px-6">
-        <div className="flex items-start justify-start sm:gap-4">
-          <SideBar
-            direction={'left'}
-            show={showLeftBar}
-            onClose={toggleLeftBar}
-          />
-          <div className="flex-1 w-full">
-            <SpreadSheet
-              columns={TestRecordColumns}
-              data={createTestRecords()}
-            />
-          </div>
-        </div>
+      <div className="flex-1 w-full">
+        <Excel />
       </div>
-      <Separator padding={10} />
+      <Separator padding={200} />
     </Layout>
   )
 }

@@ -13,7 +13,7 @@ export default function () {
   if (status === LoginCheckState.loading) return <LoadingScreen />
   if (status === LoginCheckState.loggedIn) {
     router.push('/dashboard')
-    return
+    return <></>
   }
 
   return <SignUpPage />

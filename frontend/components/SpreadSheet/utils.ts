@@ -1,4 +1,10 @@
-import { SpreadSheetColumn, SSGenericType } from './types'
+import {
+  BaseRecordColumns,
+  BaseSpreadSheetObj,
+  BaseSpreadSheetType,
+  SpreadSheetColumn,
+  SSGenericType,
+} from './types'
 import { Row, TextCell } from '@silevis/reactgrid'
 import exp from 'constants'
 
@@ -20,7 +26,12 @@ export const getRows = <T extends SSGenericType>(
     rowId: rowNumber + index,
     cells: columns.map(({ columnId }) => ({
       type: 'text',
-      text: item[columnId],
+      text: columnId === 'sr' ? (index + 1).toString() : item[columnId],
+      nonEditable: columnId === 'sr',
+      className: columnId === 'sr' ? 'bg-gray-100' : 'bg-white',
+      style: {
+        color: '#1B1E1F',
+      },
     })),
   }))
 }
@@ -41,9 +52,10 @@ export const getRowsWithHeader = <T extends SSGenericType>(
     cells: columns.map((item) => ({
       type: 'header',
       text: item.header,
-      className: 'bg-gray-100',
+      className: 'bg-gray-100 text-white',
       style: {
         background: '',
+        color: '#1B1E1F',
       },
     })),
   } as Row
@@ -93,4 +105,15 @@ export const makeColumnIdMap = <T extends SSGenericType>(
       [item.columnId]: index,
     })),
   )
+}
+
+export function createList<T extends BaseSpreadSheetType>(
+  type: T,
+  n: number = 10,
+): T[] {
+  const list: T[] = []
+  for (let i = 0; i < n; i++) {
+    list.push({ ...type, ...BaseSpreadSheetObj })
+  }
+  return list
 }

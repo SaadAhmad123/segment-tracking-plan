@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 import {
   CellChange,
   CellLocation,
+  Column,
   Id,
   MenuOption,
   ReactGrid,
@@ -9,7 +10,7 @@ import {
   TextCell,
 } from '@silevis/reactgrid'
 import '@silevis/reactgrid/styles.css'
-import { ISpreadSheet, SSGenericType } from './types'
+import { ISpreadSheet, SpreadSheetColumn, SSGenericType } from './types'
 import { getRowsWithHeader, makeColumnIdMap } from './utils'
 import useReactiveRef from '../../hooks/useReactiveRef'
 import safeConsole from '../../helpers/safeConsole'
@@ -18,6 +19,21 @@ import { createAddRowsContextMenuItem } from './ContextMenuItems'
 import useUndoRedo from '../../hooks/useUndoRedo'
 import Modal from '../Modal'
 import Separator from '../Separator'
+
+const attachSerialNumberToSheetColumns = <T extends SSGenericType>(
+  sheetColumns: SpreadSheetColumn<T>[],
+) => {
+  return [
+    {
+      header: '',
+      columnId: 'sr',
+      resizable: false,
+      reorderable: false,
+      width: 30,
+    },
+    ...sheetColumns,
+  ] as SpreadSheetColumn<T>[]
+}
 
 /**
  SpreadSheet is a component that displays a grid of data where the user can
@@ -36,11 +52,22 @@ const SpreadSheet = <T extends SSGenericType>({
   dataRef,
 }: ISpreadSheet<T>) => {
   const windowSize = useWindowSize()
-  const [sheetRows, setSheetRows] = useState(getRowsWithHeader(columns, data))
-  const [sheetColumns, setSheetColumns] = useState(columns.map(item => ({...item, resizable: true})))
-  const [toFormat, setToFormat] = useState<CellLocation[][] | undefined>(undefined)
+  const [sheetRows, setSheetRows] = useState(
+    getRowsWithHeader(attachSerialNumberToSheetColumns<T>(columns), data),
+  )
+  const [sheetColumns, setSheetColumns] = useState(
+    attachSerialNumberToSheetColumns<T>(
+      columns.map((item) => ({ ...item, resizable: true })),
+    ),
+  )
+  const [toFormat, setToFormat] = useState<CellLocation[][] | undefined>(
+    undefined,
+  )
   // A memoized map that maps column IDs to column indices.
-  const columnIndexMap = useMemo(() => makeColumnIdMap(columns), [columns])
+  const columnIndexMap = useMemo(
+    () => makeColumnIdMap(attachSerialNumberToSheetColumns(columns)),
+    [columns],
+  )
 
   const updateDataRef = (data: T[] | undefined) => {
     if (!dataRef) return
@@ -51,7 +78,12 @@ const SpreadSheet = <T extends SSGenericType>({
     useReactiveRef<T[]>(
       data,
       (newValue) => {
-        setSheetRows(getRowsWithHeader(columns, newValue || []))
+        setSheetRows(
+          getRowsWithHeader(
+            attachSerialNumberToSheetColumns(columns),
+            newValue || [],
+          ),
+        )
         updateDataRef(newValue)
       },
       updateDataRef,
@@ -119,8 +151,8 @@ const SpreadSheet = <T extends SSGenericType>({
       return [
         ...menuOptions,
         {
-          id: "format",
-          label: "Format",
+          id: 'format',
+          label: 'Format',
           handler: (
             selectedRowIds: Id[],
             selectedColIds: Id[],
@@ -128,7 +160,7 @@ const SpreadSheet = <T extends SSGenericType>({
             selectedRanges: Array<CellLocation[]>,
           ) => {
             setToFormat(selectedRanges)
-          }
+          },
         },
         createAddRowsContextMenuItem(
           selectedRanges,
@@ -154,20 +186,21 @@ const SpreadSheet = <T extends SSGenericType>({
           ? `${windowSize.innerHeight - 150}px`
           : '100vh',
       }}
-      className={`overflow-x-auto overflow-y-auto bg-white shadow text-servian-black`}
+      className={`overflow-x-auto overflow-y-auto bg-white border text-servian-black-dark`}
     >
       <ReactGrid
         columns={sheetColumns}
         rows={sheetRows}
         onCellsChanged={onCellChanged}
         stickyTopRows={1}
+        stickyLeftColumns={1}
         enableFullWidthHeader
         enableRangeSelection
         onContextMenu={onContextMenu}
         onColumnResized={(columnId, width) => {
-          const cols = sheetColumns.map(item => {
+          const cols = sheetColumns.map((item) => {
             if (item.columnId === columnId) {
-              return {...item, width}
+              return { ...item, width }
             }
             return item
           })
@@ -175,12 +208,13 @@ const SpreadSheet = <T extends SSGenericType>({
         }}
         enableColumnSelection
       />
-      <Modal show={Boolean(toFormat)} onClickBackground={() => setToFormat(undefined)}>
+      <Modal
+        show={Boolean(toFormat)}
+        onClickBackground={() => setToFormat(undefined)}
+      >
         <h1 className="text-2xl sm:text-4xl font-bold">Format Cell</h1>
-        <Separator/>
-        <p>
-          {JSON.stringify(toFormat, null, 2)}
-        </p>
+        <Separator />
+        <p>{JSON.stringify(toFormat, null, 2)}</p>
       </Modal>
     </div>
   )

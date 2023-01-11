@@ -9,7 +9,6 @@ interface IUseUndoRedo<T> {
   ) => void
 }
 
-
 /**
  * useUndoRedo is a hook that provides undo [(Cmd | Ctrl) + Z]/redo [(Shift + (Cmd | Ctrl) + Z)]
  * functionality by listening for

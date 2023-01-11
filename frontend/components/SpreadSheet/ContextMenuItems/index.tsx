@@ -27,10 +27,12 @@ export const createAddRowsContextMenuItem = <T extends SSGenericType>(
     handler: () => {
       const _data = []
       for (let i = 0; i < rowsSelected.size; i++) {
-        _data.push(Object.assign(
-          {},
-          ...columns.map((item) => ({ [item.columnId]: '' })),
-        ))
+        _data.push(
+          Object.assign(
+            {},
+            ...columns.map((item) => ({ [item.columnId]: '' })),
+          ),
+        )
       }
       try {
         onClickAddRows?.(
