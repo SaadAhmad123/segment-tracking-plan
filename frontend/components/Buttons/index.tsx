@@ -3,7 +3,7 @@ import React from 'react'
 type ButtonProps = {
   text: string
   icon?: React.ReactNode
-  onClick?: () => void
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
   type?: 'button' | 'submit' | 'reset' | undefined
   title?: string
   ariaLabel?: string

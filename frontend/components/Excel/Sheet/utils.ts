@@ -1,5 +1,14 @@
 import { ExcelDataCell } from '../types'
-import { Cell, CellLocation, Column, HeaderCell, Id, MenuOption, Row, TextCell } from '@silevis/reactgrid'
+import {
+  Cell,
+  CellLocation,
+  Column,
+  HeaderCell,
+  Id,
+  MenuOption,
+  Row,
+  TextCell,
+} from '@silevis/reactgrid'
 import { MutableRefObject, useEffect, useState } from 'react'
 import { useWindowSize } from '../../../hooks/useWindowResize'
 import safeConsole from '../../../helpers/safeConsole'

@@ -2,5 +2,8 @@ import { TextCell } from '@silevis/reactgrid'
 
 export type ExcelDataCell = TextCell
 export type ExcelDataType = {
-  [sheet: string]: ExcelDataCell[][]
+  [sheet: string]: {
+    title: string
+    data: ExcelDataCell[][]
+  }
 }

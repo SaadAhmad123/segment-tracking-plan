@@ -5,11 +5,7 @@ interface ITopBar {
 }
 
 const TopBar = ({ children }: ITopBar) => {
-  return (
-    <div className="flex items-center gap-2">
-      {children}
-    </div>
-  )
+  return <div className="flex items-center gap-2">{children}</div>
 }
 
 export default TopBar

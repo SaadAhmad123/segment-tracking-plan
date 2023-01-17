@@ -1,7 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { ExcelDataCell } from '../types'
 import useReactiveRef from '../../../hooks/useReactiveRef'
-import { CellChange, CellLocation, Id, MenuOption, ReactGrid, SelectionMode, TextCell } from '@silevis/reactgrid'
+import {
+  CellChange,
+  CellLocation,
+  Id,
+  MenuOption,
+  ReactGrid,
+  SelectionMode,
+  TextCell,
+} from '@silevis/reactgrid'
 import '@silevis/reactgrid/styles.css'
 import safeConsole from '../../../helpers/safeConsole'
 import useUndoRedo from '../../../hooks/useUndoRedo'
@@ -104,18 +112,18 @@ const Sheet = ({ data, sheet, onChange }: ISheet) => {
       })
       triggerSheetDataChange()
     },
-    removeColumn: (columnIds: number[])  => {
+    removeColumn: (columnIds: number[]) => {
       console.log({ columnIds })
       if (sheetColumns.data.length - 1 === columnIds.length) return
       updateUndoStack(sheetDataRef.current || [])
       if (!sheetDataRef.current) return
       sheetDataRef.current = sheetDataRef.current.map((row) => {
-        const newRow = [...row];
+        const newRow = [...row]
         for (let i = columnIds.length - 1; i >= 0; i--) {
-          newRow.splice(columnIds[i], 1);
+          newRow.splice(columnIds[i], 1)
         }
-        return newRow;
-      });
+        return newRow
+      })
       triggerSheetDataChange()
     },
   }
@@ -167,14 +175,13 @@ const Sheet = ({ data, sheet, onChange }: ISheet) => {
         createRemoveColumnsContextMenu(
           selectedRanges,
           sheetColumns.data.length - 1,
-          onClick.removeColumn
-        )
+          onClick.removeColumn,
+        ),
       ].filter((item) => Boolean(item)) as MenuOption[]
     },
     [],
   )
 
-  console.log({ cols: sheetColumns.data })
   const header = useMemo(
     () => getHeader(sheetColumns.data),
     [sheetColumns.data],

@@ -4,7 +4,6 @@ import Navbar from '../../Navbar'
 import TrackingPlanCreatedByMe from './TrackingPlan/CreatedByMe'
 import Separator from '../../Separator'
 
-
 const DashboardPage = () => {
   return (
     <Layout navbar={<Navbar />}>

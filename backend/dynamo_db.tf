@@ -67,3 +67,114 @@ data "aws_iam_policy_document" "dynamodb_policy" {
     ]
   }
 }
+
+/*
+{
+  document_id:string
+  created_at: number
+  content: string
+  published_by: string
+}
+*/
+
+resource "aws_dynamodb_table" "published_document_nodes" {
+  name         = "publish_document_nodes"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "document_id"
+  range_key    = "created_at"
+
+  attribute {
+    name = "document_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "created_at"
+    type = "N"
+  }
+
+  attribute {
+    name = "published_by"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name            = "published_by_created_at_index"
+    hash_key        = "published_by"
+    range_key       = "created_at"
+    projection_type = "ALL"
+  }
+}
+
+
+/*
+{
+  document_id:string
+  created_at: number
+  content: string
+  created_by: string
+  ancestor_id: string
+  ancestor_created_at: number
+}
+*/
+resource "aws_dynamodb_table" "draft_document_nodes" {
+  name         = "draft_document_nodes"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "document_id"
+  range_key    = "created_at"
+
+  attribute {
+    name = "document_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "created_at"
+    type = "N"
+  }
+
+  attribute {
+    name = "ancestor_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "created_by"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name            = "ancestor_id_index"
+    hash_key        = "ancestor_id"
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "created_by_created_at_index"
+    hash_key        = "created_by"
+    range_key       = "created_at"
+    projection_type = "ALL"
+  }
+}
+
+data "aws_iam_policy_document" "dynamodb_document_nodes_policy" {
+  statement {
+    actions = [
+      "dynamodb:GetItem",
+      "dynamodb:PutItem",
+      "dynamodb:UpdateItem",
+      "dynamodb:DeleteItem",
+      "dynamodb:Scan",
+      "dynamodb:Query"
+    ]
+
+    resources = [
+      "${aws_dynamodb_table.published_document_nodes.arn}",
+      "${aws_dynamodb_table.published_document_nodes.arn}/index/published_by_created_at_index",
+      "${aws_dynamodb_table.draft_document_nodes.arn}",
+      "${aws_dynamodb_table.draft_document_nodes.arn}/index/ancestor_id_index",
+      "${aws_dynamodb_table.draft_document_nodes.arn}/index/created_by_created_at_index",
+    ]
+  }
+}
+

@@ -1,97 +1,165 @@
-import React, { MutableRefObject, useMemo, useState } from 'react'
+import React, { MutableRefObject, useCallback, useState } from 'react'
 import useReactiveRef from '../../hooks/useReactiveRef'
-import { ExcelDataCell, ExcelDataType } from './types'
+import { ExcelDataType } from './types'
 import Sheet from './Sheet'
-import { useWindowSize } from '../../hooks/useWindowResize'
+import ExcelContainer, { ExcelButtonContainer } from './Container'
+import { ExcelSheetAddButton, ExcelSheetButton } from './Button'
+import { createEmptySheet } from './utils'
+import Modal from '../Modal'
+import { TextCell } from '@silevis/reactgrid'
+import { HomePageActionButton, SuppressedHomePageActionButton } from '../Buttons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowLeft, faTrash } from '@fortawesome/free-solid-svg-icons'
+import Separator from '../Separator'
+import Form, { FormInputItem } from '../utils/Form'
 
 interface IExcel {
   data?: ExcelDataType
   dataRef?: MutableRefObject<ExcelDataType | undefined>
 }
 
-export const createEmptySheet = (rows = 50, cols = 15) => {
-  const col: ExcelDataCell[] = []
-  for (let i = 0; i < cols; i++) {
-    col.push({ text: '', type: 'text' } as ExcelDataCell)
-  }
-  const data: ExcelDataCell[][] = []
-  for (let i = 0; i < rows; i++) {
-    data.push([...col])
-  }
-  return data
-}
-
-
-const Excel = ({ data = { 'Sheet 1': createEmptySheet() }, dataRef }: IExcel) => {
-  const windowSize = useWindowSize()
-  const { get: getExcelData, ref: refExcelData, onChange: onChangeExcelData, triggerChange: triggerExcelDataChange } =
-    useReactiveRef<ExcelDataType>(data)
+const Excel = ({
+  data = { 'sheet1': {
+    title: "Sheet 1",
+    data:  createEmptySheet()
+    } },
+  dataRef,
+}: IExcel) => {
+  const {
+    get: getExcelData,
+    ref: refExcelData,
+    onChange: onChangeExcelData,
+    triggerChange: triggerExcelDataChange,
+  } = useReactiveRef<ExcelDataType>(data)
   const [selectedExcelSheet, setSelectedExcelSheet] = useState(
     Object.keys(data)[0],
   )
-  const [excelSheets, setExcelSheets] = useState<string[]>(Object.keys(getExcelData() || {}))
-
+  const [excelSheets, setExcelSheets] = useState<string[]>(
+    Object.keys(getExcelData() || {}),
+  )
+  const [requestedContextMenu, setRequestContextMenu] = useState<{index: number, key: string} | undefined>(undefined)
   onChangeExcelData((newValue) => {
     setExcelSheets(Object.keys(newValue || {}))
   })
-
-  const onAddSheet = () => {
+  const onAddSheet = useCallback(() => {
     const numberOfSheets = Object.keys(getExcelData() || {}).length
     if (!refExcelData.current) {
-      refExcelData.current = {"Sheet 1": createEmptySheet()}
+      refExcelData.current = { 'sheet1': {
+          title: "Sheet 1",
+          data:  createEmptySheet()
+        }}
     } else {
-      refExcelData.current[`Sheet ${numberOfSheets + 1}`] = createEmptySheet()
+      refExcelData.current[`sheet${numberOfSheets + 1}`] = {
+        title: `Sheet ${numberOfSheets + 1}`,
+        data: createEmptySheet()
+      }
     }
     triggerExcelDataChange()
+  }, [getExcelData, triggerExcelDataChange, refExcelData])
+  const onChangeData = useCallback((sheet: string, data: TextCell[][]) => {
+    if (!refExcelData.current) return
+    refExcelData.current[sheet].data = data
+    if (dataRef) {
+      dataRef.current = refExcelData.current
+    }
+  }, [refExcelData, dataRef])
+  const sheetSettingsInput: FormInputItem[] = [
+    { label: 'Sheet Name', type: 'text', key: 'sheetName' },
+  ].map((item) => ({ isRequired: false, ...item }))
+
+  const onSubmitSheetSettings = (sheetKey?: string, sheetIndex?: number) => async (value: {[p: string] : any}) => {
+    if (!sheetKey) return
+    if (sheetIndex === undefined) return
+    if (refExcelData.current) {
+      refExcelData.current[sheetKey].title = value["sheetName"]
+    }
+    triggerExcelDataChange()
+    setRequestContextMenu(undefined)
+  }
+
+  const onDeleteSheetSettings = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (requestedContextMenu?.index === 0) {
+      setSelectedExcelSheet(Object.keys(refExcelData.current || {})[1])
+    } else {
+      setSelectedExcelSheet(Object.keys(refExcelData.current || {})[0])
+    }
+    if (requestedContextMenu?.key && refExcelData.current) {
+      delete refExcelData.current[requestedContextMenu.key]
+    }
+    setExcelSheets(Object.keys(refExcelData.current || {}))
+    setRequestContextMenu(undefined)
+    e.preventDefault()
   }
 
   return (
-    <div
-      style={{
-        height: windowSize?.innerHeight
-          ? `${windowSize.innerHeight - 150}px`
-          : '100vh',
-      }}
-      className={`flex flex-col border text-servian-black-dark relative`}
-    >
-      <div className={"overflow-x-auto overflow-y-auto bg-white flex-1"}>
-        <Sheet
-          sheet={selectedExcelSheet}
-          data={(getExcelData() || {})[selectedExcelSheet]}
-          onChange={(sheet, data) => {
-            if (!refExcelData.current) return
-            refExcelData.current[sheet] = data
-            if (dataRef) {
-              dataRef.current = refExcelData.current
-            }
-          }}
-        />
-      </div>
-      <div className={"flex items-center justify-start space-x-4 overflow-x-scroll sticky bottom-0 left-0 w-full bg-white border-t"}>
-        {
-          excelSheets.map((item, index) => (
-            <button
+    <>
+      <ExcelContainer>
+        <div className={'overflow-x-auto overflow-y-auto bg-white flex-1'}>
+          <Sheet
+            sheet={selectedExcelSheet}
+            data={(getExcelData() || {})[selectedExcelSheet].data}
+            onChange={onChangeData}
+          />
+        </div>
+        <ExcelButtonContainer>
+          {excelSheets.map((item, index) => (
+            <ExcelSheetButton
               key={index}
-              className={`transition duration-200 min-w-[150px] px-6 py-1 text-gray-500 hover:bg-gray-200 ${index === excelSheets.length - 1 ? "" : "border-r border-r-1 border-gray-300"} ${selectedExcelSheet === item ? "bg-gray-200 border-y-gray-200" : "bg-gray-100 border-y-gray-100"} border-y border-y-4 hover:border-y-gray-200 rounded-none`}
-              style={{marginLeft: 0, marginRight: 0}}
-              title={item}
+              title={refExcelData?.current?.[item]?.title || ""}
               onClick={() => setSelectedExcelSheet(item)}
-            >
-              {item.slice(0, 8)}{item.length > 8? "..." : ""}
-            </button>
-          ))
-        }
-        <button
-          key={-1}
-          style={{marginLeft: 0, marginRight: 0}}
-          className="min-w-[100px] px-6 py-1 bg-servian-orange border-y-servian-orange hover:bg-servian-black hover:border-y-servian-black text-servian-white border-y border-y-4"
-          onClick={onAddSheet}
-          title={"Add"}
-        >
-          Add
-        </button>
-      </div>
-    </div>
+              isSheetSelected={selectedExcelSheet === item}
+              isLastItem={index === excelSheets.length - 1}
+              onContextMenu={(e) => {
+                e.preventDefault()
+                setRequestContextMenu({
+                  index,
+                  key: item
+                })
+              }}
+            />
+          ))}
+          <ExcelSheetAddButton onClick={onAddSheet} />
+        </ExcelButtonContainer>
+      </ExcelContainer>
+      <Modal show={Boolean(requestedContextMenu)} onClickBackground={() => setRequestContextMenu(undefined)}>
+        <SuppressedHomePageActionButton
+          className="bg-gray-100 text-servian-black hover:bg-gray-200"
+          text={'Back'}
+          icon={<FontAwesomeIcon icon={faArrowLeft} />}
+          onClick={() => setRequestContextMenu(undefined)}
+        />
+        <Separator padding={16} />
+        <h1 className="text-2xl sm:text-4xl font-bold">
+          Sheet Settings
+        </h1>
+        <div className="max-w-[400px] mt-4">
+          <Form
+            formValues={{sheetName: refExcelData?.current?.[requestedContextMenu?.key || ""]?.title || ""}}
+            inputs={sheetSettingsInput}
+            handleSubmit={onSubmitSheetSettings(requestedContextMenu?.key, requestedContextMenu?.index)}
+            SubmitButton={() => (
+              <div className="flex gap-6 justify-start w-full flex-wrap">
+                <HomePageActionButton
+                  text="Submit"
+                  type={'submit'}
+                />
+                {
+                  (Object.keys(refExcelData.current || {}).length > 1) && (
+                    <HomePageActionButton
+                      type={'button'}
+                      className="bg-red-500 hover:bg-red-600"
+                      text="Delete"
+                      icon={<FontAwesomeIcon icon={faTrash} />}
+                      onClick={onDeleteSheetSettings}
+                    />
+                  )
+                }
+              </div>
+            )}
+          />
+        </div>
+      </Modal>
+    </>
   )
 }
 
