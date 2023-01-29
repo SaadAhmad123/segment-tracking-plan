@@ -70,21 +70,38 @@ data "aws_iam_policy_document" "dynamodb_policy" {
 
 /*
 {
-  document_id:string
-  created_at: number
+  uuid: string
   content: string
-  published_by: string
+  created_at: string
+  repository_id: string
+  author_id: string
+  branch_id: string
+  parent_id: string
 }
 */
 
-resource "aws_dynamodb_table" "published_document_nodes" {
-  name         = "publish_document_nodes"
+resource "aws_dynamodb_table" "git_vc_commits" {
+  name         = "git_vc_commits"
   billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "document_id"
-  range_key    = "created_at"
+  hash_key     = "uuid"
 
   attribute {
-    name = "document_id"
+    name = "uuid"
+    type = "S"
+  }
+
+  attribute {
+    name = "repository_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "author_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "branch_id"
     type = "S"
   }
 
@@ -94,70 +111,141 @@ resource "aws_dynamodb_table" "published_document_nodes" {
   }
 
   attribute {
-    name = "published_by"
+    name = "parent_id"
     type = "S"
   }
 
   global_secondary_index {
-    name            = "published_by_created_at_index"
-    hash_key        = "published_by"
+    name            = "parent_id_index"
+    hash_key        = "parent_id"
+    range_key       = "uuid"
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "branch_id_created_at_index"
+    hash_key        = "branch_id"
     range_key       = "created_at"
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "branch_id_index"
+    hash_key        = "branch_id"
+    range_key       = "uuid"
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "author_id_index"
+    hash_key        = "author_id"
+    range_key       = "uuid"
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "repository_id_index"
+    hash_key        = "repository_id"
+    range_key       = "uuid"
     projection_type = "ALL"
   }
 }
 
 
-/*
+/**
 {
-  document_id:string
-  created_at: number
-  content: string
-  created_by: string
-  ancestor_id: string
-  ancestor_created_at: number
+  uuid: string
+  commit_id: string
+  parent_id: string
+  order: number // Maintains the order of the parents
 }
 */
-resource "aws_dynamodb_table" "draft_document_nodes" {
-  name         = "draft_document_nodes"
+resource "aws_dynamodb_table" "git_vc_commit_parents" {
+  name         = "git_vc_commit_parents"
   billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "document_id"
-  range_key    = "created_at"
+  hash_key     = "uuid"
 
   attribute {
-    name = "document_id"
+    name = "uuid"
     type = "S"
   }
 
   attribute {
-    name = "created_at"
+    name = "commit_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "parent_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "order"
     type = "N"
   }
 
-  attribute {
-    name = "ancestor_id"
-    type = "S"
-  }
-
-  attribute {
-    name = "created_by"
-    type = "S"
-  }
-
   global_secondary_index {
-    name            = "ancestor_id_index"
-    hash_key        = "ancestor_id"
+    name            = "commit_id_parent_id_index"
+    hash_key        = "commit_id"
+    range_key       = "parent_id"
     projection_type = "ALL"
   }
 
   global_secondary_index {
-    name            = "created_by_created_at_index"
-    hash_key        = "created_by"
-    range_key       = "created_at"
+    name            = "commit_id_index"
+    hash_key        = "commit_id"
+    range_key       = "order"
     projection_type = "ALL"
   }
 }
 
-data "aws_iam_policy_document" "dynamodb_document_nodes_policy" {
+/**
+{
+  uuid: string
+  name: string
+  created_at: string
+  repository_id: string
+  author_id: string
+  head_commit_id: sting
+}
+*/
+resource "aws_dynamodb_table" "git_vc_branches" {
+  name         = "git_vc_branches"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "uuid"
+
+  attribute {
+    name = "uuid"
+    type = "S"
+  }
+
+  attribute {
+    name = "repository_id"
+    type = "S"
+  }
+
+  attribute {
+    name = "name"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name            = "repository_id_index"
+    hash_key        = "repository_id"
+    range_key       = "uuid"
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "repository_id_name_index"
+    hash_key        = "repository_id"
+    range_key       = "name"
+    projection_type = "ALL"
+  }
+}
+
+data "aws_iam_policy_document" "dynamodb_git_vc_policy" {
   statement {
     actions = [
       "dynamodb:GetItem",
@@ -169,11 +257,18 @@ data "aws_iam_policy_document" "dynamodb_document_nodes_policy" {
     ]
 
     resources = [
-      "${aws_dynamodb_table.published_document_nodes.arn}",
-      "${aws_dynamodb_table.published_document_nodes.arn}/index/published_by_created_at_index",
-      "${aws_dynamodb_table.draft_document_nodes.arn}",
-      "${aws_dynamodb_table.draft_document_nodes.arn}/index/ancestor_id_index",
-      "${aws_dynamodb_table.draft_document_nodes.arn}/index/created_by_created_at_index",
+      "${aws_dynamodb_table.git_vc_commits.arn}",
+      "${aws_dynamodb_table.git_vc_commits.arn}/index/parent_id_index",
+      "${aws_dynamodb_table.git_vc_commits.arn}/index/branch_id_created_at_index",
+      "${aws_dynamodb_table.git_vc_commits.arn}/index/branch_id_index",
+      "${aws_dynamodb_table.git_vc_commits.arn}/index/author_id_index",
+      "${aws_dynamodb_table.git_vc_commits.arn}/index/repository_id_index",
+      "${aws_dynamodb_table.git_vc_commit_parents.arn}",
+      "${aws_dynamodb_table.git_vc_commit_parents.arn}/index/commit_id_index",
+      "${aws_dynamodb_table.git_vc_commit_parents.arn}/index/commit_id_parent_id_index",
+      "${aws_dynamodb_table.git_vc_branches.arn}",
+      "${aws_dynamodb_table.git_vc_branches.arn}/index/repository_id_index",
+      "${aws_dynamodb_table.git_vc_branches.arn}/index/repository_id_name_index",
     ]
   }
 }

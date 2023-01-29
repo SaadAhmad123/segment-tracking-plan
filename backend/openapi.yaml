@@ -417,6 +417,55 @@ paths:
                   error:
                     type: string
                     description: Internal server error
+  /repository/branch:
+    post:
+      summary: Create a branch for a repository
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - repository_id
+                - name
+              properties:
+                repository_id:
+                  type: string
+                name:
+                  type: string
+                head_commit_id:
+                  type: string
+      responses:
+        "200":
+          description: Successfu creation of branch
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                  name:
+                    type: string
+                  created_at:
+                    type: string
+                  repository_id:
+                    type: string
+                  author_id:
+                    type: string
+                  head_commit_id:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Internal server error
+
   /:
     get:
       summary: Catch-all route for non-existent resources
@@ -528,3 +577,18 @@ components:
         description:
           type: string
           description: Description of the tracking plan
+    VersionControl_Branch:
+      type: object
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+        created_at:
+          type: string
+        repository_id:
+          type: string
+        author_id:
+          type: string
+        head_commit_id:
+          type: string
