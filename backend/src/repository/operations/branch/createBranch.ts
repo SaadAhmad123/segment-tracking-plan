@@ -11,8 +11,8 @@ type CreateBranchType = {
 }
 
 export default (dynamoDb: DynamoDB.DocumentClient): RequestHandler => async (req: RequestWithBody<CreateBranchType>, res) => {
+    attachCorsHeaders(res)
     try {
-        attachCorsHeaders(res)
         const cognito_uuid = throwErrorOnEmpty(
             // @ts-ignore
             req?.requestContext?.authorizer?.claims?.sub,

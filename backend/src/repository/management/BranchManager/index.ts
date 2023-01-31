@@ -93,7 +93,7 @@ export default class BranchManager {
                 expressionAttributeValues[":updated_at"] = Date.now()
             }
             return {
-                UpdateExpression: `set ${expressions.join(" ")}`,
+                UpdateExpression: `set ${expressions.join(", ")}`,
                 ExpressionAttributeNames: expressionAttributeNames,
                 ExpressionAttributeValues: expressionAttributeValues,
             }
@@ -105,6 +105,7 @@ export default class BranchManager {
             },
             ...getUpdateExpression(toUpdate.name, toUpdate.head_commit_id)
         } as DynamoDB.DocumentClient.UpdateItemInput
+        console.log(params)
         await this.dynamoDb.update(params).promise()
         return await this.get(branch_id)
     }

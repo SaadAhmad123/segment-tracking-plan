@@ -441,20 +441,40 @@ paths:
           content:
             application/json:
               schema:
+                $ref: "#/components/schemas/VersionControl_Branch"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
                 type: object
                 properties:
-                  uuid:
+                  error:
                     type: string
-                  name:
-                    type: string
-                  created_at:
-                    type: string
-                  repository_id:
-                    type: string
-                  author_id:
-                    type: string
-                  head_commit_id:
-                    type: string
+                    description: Internal server error
+    patch:
+      summary: Update a branch for a repository
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - branch_id
+              properties:
+                branch_id:
+                  type: string
+                name:
+                  type: string
+                head_commit_id:
+                  type: string
+      responses:
+        "200":
+          description: Successfull creation of branch
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VersionControl_Branch"
         "500":
           description: Internal server error
           content:
